@@ -3,7 +3,7 @@ from collections import deque
 import pygame
 
 # Open image
-im = Image.open("Prueba-Lab1.png")
+im = Image.open("p2.jpeg")
 
 # Get image width and height
 width, height = im.size
