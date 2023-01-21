@@ -15,17 +15,12 @@ if inicio is None:
 elif len(finales) == 0:
     print("No se encontraron cuadros verdes como finales")
 else:
-    pass
-    # Resolver el laberinto utilizando un algoritmo de búsqueda
-    # Dibujar la solución en pantalla
-    # Guardar la solución en un archivo
+    #SHORTEST PATH BFS
+    for x in al.shortest_path_bfs(inicio, finales,laberinto):
+        laberinto[x[1]][x[0]] = 5
 
-#SHORTEST PATH BFS
-for x in al.shortest_path_bfs(inicio, finales,laberinto):
-    laberinto[x[1]][x[0]] = 5
-
-#for x in bfs(inicio, [], [], laberinto)
-#    laberinto[x[1]][x[0]] = 5
+    #for x in bfs(inicio, [], [], laberinto)
+    #    laberinto[x[1]][x[0]] = 5
 
 for x in laberinto:
     print (x)
