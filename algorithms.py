@@ -1,4 +1,5 @@
 import heapq
+from PIL import Image, ImageDraw
 
 
 def up(x, y, laberinto):
@@ -163,3 +164,36 @@ def manhattan_distance(a, b):
 def euclidean_distance(a, b):
     # Example of a Euclidean distance heuristic
     return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5
+
+
+def paint_maze(maze, name):
+    # se obtienen las dimensiones del laberinto
+    rows = len(maze)
+    cols = len(maze[0])
+    # se crea la imagen con las dimensiones
+    img = Image.new('RGB', (cols * 12, rows * 12), color=(255, 255, 255))
+    draw = ImageDraw.Draw(img)
+    # se recorre cada celda del laberinto
+    for row in range(rows):
+        for col in range(cols):
+            # obtenemos el num de la celda
+            num = maze[row][col]
+            # se pinta la celda
+            if num == 1:
+                color = (0, 0, 0)  # negro
+            elif num == 0:
+                color = (255, 255, 255)  # blanco
+            elif num == 2:
+                color = (0, 255, 0)  # verde
+            elif num == 3:
+                color = (255, 0, 0)  # rojo
+            elif num == 5:
+                color = (255, 165, 0)  # naranja
+            else:
+                color = (255, 255, 255)  # blanco
+            x1 = col * 12 + 1
+            y1 = row * 12 + 1
+            x2 = x1 + 10
+            y2 = y1 + 10
+            draw.rectangle([(x1, y1), (x2, y2)], fill=color)
+    img.save(name)
