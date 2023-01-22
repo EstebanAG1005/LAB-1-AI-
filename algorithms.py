@@ -91,38 +91,26 @@ def bfs(node, visited, queue, laberinto):  # function for BFS
     return visited
 
 
-def dfs(start, maze):
-    # con esta funcion recursiva vamos añadiendo los pasos al laberinto
-    def shortest_path_dfs(x, y, path, stack):
-        # revisamos que siga adentro del laberinto
-        if x < 0 or y < 0 or x >= len(maze) or y >= len(maze[0]):
-            return False
-        # verficiamos si es pared o ya lo visitamos
-        if maze[x][y] == 1 or (x, y) in path:
-            return False
-        # si no es pared o no lo hemos visitado lo añade
-        path.append((x, y))
-        # si es un final retornamos el path
-        if maze[x][y] == 2:
-            return True
-        # nos movemos en cualquiera de las 4 posiciones posibles
-        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            stack.append((x + dx, y + dy))
-        # mientras que tengamos elementos para buscar en el stack
-        while stack:
-            x, y = stack.pop()
-            if shortest_path_dfs(x, y, path, stack):
-                return True
-        # si no hay un camino retornamos falos
-        path.pop()
-        return False
-
-    # se inicia el dfs y se retorna el path con la solucion si hay alguna
-    start_x, start_y = start
-    path = []
-    stack = [(start_x, start_y)]
-    shortest_path_dfs(start_x, start_y, path, stack)
-    return path
+def dfs(inicio, finales, laberinto):
+    filas = len(laberinto)
+    columnas = len(laberinto[0])
+    visitados = [[False for j in range(columnas)] for i in range(filas)]
+    pila = []
+    pila.append(inicio)
+    visitados[inicio[0]][inicio[1]] = True
+    camino = []
+    while len(pila) > 0:
+        actual = pila.pop()
+        camino.append(actual)
+        if actual in finales:
+            return camino
+        vecinos = [[actual[0]-1, actual[1]], [actual[0]+1, actual[1]],
+                   [actual[0], actual[1]-1], [actual[0], actual[1]+1]]
+        for vecino in vecinos:
+            if vecino[0] >= 0 and vecino[0] < filas and vecino[1] >= 0 and vecino[1] < columnas and laberinto[vecino[0]][vecino[1]] != 1 and not visitados[vecino[0]][vecino[1]]:
+                pila.append(vecino)
+                visitados[vecino[0]][vecino[1]] = True
+    return None
 
 
 def a_star(graph, start, goal, heuristic='manhattan'):
