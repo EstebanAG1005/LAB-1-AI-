@@ -1,26 +1,33 @@
-def up(x,y,laberinto):
+import heapq
+
+
+def up(x, y, laberinto):
     if y < len(laberinto)-1 and laberinto[y+1][x] != 1:
-        return [x,y+1]
+        return [x, y+1]
     else:
         return None
 
-def down(x,y,laberinto):
-    if y >0 and laberinto[y-1][x] != 1:
-        return [x,y-1]
+
+def down(x, y, laberinto):
+    if y > 0 and laberinto[y-1][x] != 1:
+        return [x, y-1]
     else:
         return None
 
-def left(x,y,laberinto):
-    if x>0 and laberinto[y][x-1] !=1:
-        return [x-1,y]
+
+def left(x, y, laberinto):
+    if x > 0 and laberinto[y][x-1] != 1:
+        return [x-1, y]
     else:
         return None
 
-def right(x,y,laberinto):
-    if x< len(laberinto[0])-1 and laberinto[y][x+1] != 1:
-        return [x+1,y]
+
+def right(x, y, laberinto):
+    if x < len(laberinto[0])-1 and laberinto[y][x+1] != 1:
+        return [x+1, y]
     else:
         return None
+
 
 def shortest_path_bfs(node1, node2, laberinto):
     path_list = [[node1]]
@@ -29,16 +36,16 @@ def shortest_path_bfs(node1, node2, laberinto):
     previous_nodes = [node1]
     if node1 in node2:
         return path_list[0]
-        
+
     while path_index < len(path_list):
         current_path = path_list[path_index]
         last_node = current_path[-1]
         next_nodes = []
 
-        next_nodes.append(up(last_node[0],last_node[1],laberinto))
-        next_nodes.append(down(last_node[0],last_node[1],laberinto))
-        next_nodes.append(left(last_node[0],last_node[1],laberinto))
-        next_nodes.append(right(last_node[0],last_node[1],laberinto))
+        next_nodes.append(up(last_node[0], last_node[1], laberinto))
+        next_nodes.append(down(last_node[0], last_node[1], laberinto))
+        next_nodes.append(left(last_node[0], last_node[1], laberinto))
+        next_nodes.append(right(last_node[0], last_node[1], laberinto))
         # Search goal node
         for dest in node2:
             if dest in next_nodes:
@@ -57,19 +64,20 @@ def shortest_path_bfs(node1, node2, laberinto):
     # No path is found
     return []
 
-def bfs(node, visited, queue, laberinto): #function for BFS
+
+def bfs(node, visited, queue, laberinto):  # function for BFS
     visited.append(node)
     queue.append(node)
     found = False
     while queue and not found:          # Creating loop to visit each node
-        m = queue.pop(0) 
+        m = queue.pop(0)
 
         neighbours = []
 
-        neighbours.append(up(m[0],m[1], laberinto))
-        neighbours.append(down(m[0],m[1], laberinto))
-        neighbours.append(left(m[0],m[1], laberinto))
-        neighbours.append(right(m[0],m[1], laberinto))
+        neighbours.append(up(m[0], m[1], laberinto))
+        neighbours.append(down(m[0], m[1], laberinto))
+        neighbours.append(left(m[0], m[1], laberinto))
+        neighbours.append(right(m[0], m[1], laberinto))
 
         for neighbour in neighbours:
             if neighbour != None and neighbour not in visited:
@@ -81,7 +89,40 @@ def bfs(node, visited, queue, laberinto): #function for BFS
                     break
     return visited
 
-import heapq
+
+def dfs(start, maze):
+    # con esta funcion recursiva vamos añadiendo los pasos al laberinto
+    def shortest_path_dfs(x, y, path, stack):
+        # revisamos que siga adentro del laberinto
+        if x < 0 or y < 0 or x >= len(maze) or y >= len(maze[0]):
+            return False
+        # verficiamos si es pared o ya lo visitamos
+        if maze[x][y] == 1 or (x, y) in path:
+            return False
+        # si no es pared o no lo hemos visitado lo añade
+        path.append((x, y))
+        # si es un final retornamos el path
+        if maze[x][y] == 2:
+            return True
+        # nos movemos en cualquiera de las 4 posiciones posibles
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            stack.append((x + dx, y + dy))
+        # mientras que tengamos elementos para buscar en el stack
+        while stack:
+            x, y = stack.pop()
+            if shortest_path_dfs(x, y, path, stack):
+                return True
+        # si no hay un camino retornamos falos
+        path.pop()
+        return False
+
+    # se inicia el dfs y se retorna el path con la solucion si hay alguna
+    start_x, start_y = start
+    path = []
+    stack = [(start_x, start_y)]
+    shortest_path_dfs(start_x, start_y, path, stack)
+    return path
+
 
 def a_star(graph, start, goal, heuristic='manhattan'):
     # Create an empty priority queue
@@ -113,9 +154,11 @@ def a_star(graph, start, goal, heuristic='manhattan'):
 
     return came_from, cost_so_far
 
+
 def manhattan_distance(a, b):
     # Example of a Manhattan distance heuristic
     return abs(a.x - b.x) + abs(a.y - b.y)
+
 
 def euclidean_distance(a, b):
     # Example of a Euclidean distance heuristic

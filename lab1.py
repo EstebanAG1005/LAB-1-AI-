@@ -15,15 +15,18 @@ if inicio is None:
 elif len(finales) == 0:
     print("No se encontraron cuadros verdes como finales")
 else:
-    #SHORTEST PATH BFS
-    for x in al.shortest_path_bfs(inicio, finales,laberinto):
-        laberinto[x[1]][x[0]] = 5
-    #A*
-    #for x in al.a_star(laberinto, inicio, finales, heuristic='manhattan'):
+    # SHORTEST PATH BFS
+    # for x in al.shortest_path_bfs(inicio, finales, laberinto):
     #    laberinto[x[1]][x[0]] = 5
+    # DFS
+    for x in al.dfs(inicio, laberinto):
+        laberinto[x[1]][x[0]] = 5
 
-    #for x in bfs(inicio, [], [], laberinto)
+    # A*
+    # for x in al.a_star(laberinto, inicio, finales, heuristic='manhattan'):
+    #    laberinto[x[1]][x[0]] = 5
+    # for x in bfs(inicio, [], [], laberinto)
     #    laberinto[x[1]][x[0]] = 5
 
 for x in laberinto:
-    print (x)
+    print(x)
