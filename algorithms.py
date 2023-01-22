@@ -180,17 +180,17 @@ def paint_maze(maze, name):
             num = maze[row][col]
             # se pinta la celda
             if num == 1:
-                color = (0, 0, 0)  # negro
+                color = (0, 0, 0)
             elif num == 0:
-                color = (255, 255, 255)  # blanco
+                color = (255, 255, 255)
             elif num == 2:
-                color = (0, 255, 0)  # verde
+                color = (0, 255, 0)
             elif num == 3:
-                color = (255, 0, 0)  # rojo
+                color = (255, 0, 0)
             elif num == 5:
-                color = (255, 165, 0)  # naranja
+                color = (255, 165, 0)
             else:
-                color = (255, 255, 255)  # blanco
+                color = (255, 255, 255)
             x1 = col * 12 + 1
             y1 = row * 12 + 1
             x2 = x1 + 10
