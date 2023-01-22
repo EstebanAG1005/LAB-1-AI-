@@ -80,3 +80,43 @@ def bfs(node, visited, queue, laberinto): #function for BFS
                     found = True
                     break
     return visited
+
+import heapq
+
+def a_star(graph, start, goal, heuristic='manhattan'):
+    # Create an empty priority queue
+    frontier = []
+    heapq.heappush(frontier, (0, start))
+    # Create a dictionary to store the cost of each node
+    came_from = {}
+    cost_so_far = {}
+    came_from[(start)] = None
+    cost_so_far[(start)] = 0
+
+    while frontier:
+        current = heapq.heappop(frontier)[1]
+
+        if current == goal:
+            break
+
+        for next in graph.neighbors(current):
+            new_cost = cost_so_far[current] + graph.cost(current, next)
+            if next not in cost_so_far or new_cost < cost_so_far[next]:
+                cost_so_far[next] = new_cost
+                # Select the heuristic to use based on the parameter
+                if heuristic == 'manhattan':
+                    priority = new_cost + manhattan_distance(goal, next)
+                elif heuristic == 'euclidean':
+                    priority = new_cost + euclidean_distance(goal, next)
+                heapq.heappush(frontier, (priority, next))
+                came_from[next] = current
+
+    return came_from, cost_so_far
+
+def manhattan_distance(a, b):
+    # Example of a Manhattan distance heuristic
+    return abs(a.x - b.x) + abs(a.y - b.y)
+
+def euclidean_distance(a, b):
+    # Example of a Euclidean distance heuristic
+    return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5
