@@ -18,6 +18,9 @@ else:
     #SHORTEST PATH BFS
     for x in al.shortest_path_bfs(inicio, finales,laberinto):
         laberinto[x[1]][x[0]] = 5
+    #A*
+    #for x in al.a_star(laberinto, inicio, finales, heuristic='manhattan'):
+    #    laberinto[x[1]][x[0]] = 5
 
     #for x in bfs(inicio, [], [], laberinto)
     #    laberinto[x[1]][x[0]] = 5
