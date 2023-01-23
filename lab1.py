@@ -3,7 +3,8 @@ import algorithms as al
 import algoritmoA as am
 
 # maze = mz.get_maze("p2.jpeg")
-maze = mz.get_maze("p1.png")
+# maze = mz.get_maze("p1.png")
+maze = mz.get_maze("p3.bmp")
 
 laberinto = maze[0]
 inicio = maze[1]
