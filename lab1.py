@@ -1,5 +1,6 @@
 import image_processing as mz
 import algorithms as al
+import algoritmoA as am
 
 # maze = mz.get_maze("p2.jpeg")
 maze = mz.get_maze("p1.png")
@@ -25,8 +26,9 @@ else:
     # for x in al.dfs(inicio, [], [], laberinto):
     #     laberinto[x[1]][x[0]] = 5
     # A*
-    # for x in al.a_star(laberinto, inicio, finales, heuristic='manhattan'):
+    #for x in am.shortest_path_a_star(inicio, finales, laberinto):
     #    laberinto[x[1]][x[0]] = 5
+
     # for x in bfs(inicio, [], [], laberinto)
     #    laberinto[x[1]][x[0]] = 5
 
