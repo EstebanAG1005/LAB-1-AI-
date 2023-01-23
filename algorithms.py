@@ -3,29 +3,29 @@ from PIL import Image, ImageDraw
 
 
 def up(x, y, laberinto):
-    if y < len(laberinto)-1 and laberinto[y+1][x] != 1:
-        return [x, y+1]
+    if y < len(laberinto) - 1 and laberinto[y + 1][x] != 1:
+        return [x, y + 1]
     else:
         return None
 
 
 def down(x, y, laberinto):
-    if y > 0 and laberinto[y-1][x] != 1:
-        return [x, y-1]
+    if y > 0 and laberinto[y - 1][x] != 1:
+        return [x, y - 1]
     else:
         return None
 
 
 def left(x, y, laberinto):
-    if x > 0 and laberinto[y][x-1] != 1:
-        return [x-1, y]
+    if x > 0 and laberinto[y][x - 1] != 1:
+        return [x - 1, y]
     else:
         return None
 
 
 def right(x, y, laberinto):
-    if x < len(laberinto[0])-1 and laberinto[y][x+1] != 1:
-        return [x+1, y]
+    if x < len(laberinto[0]) - 1 and laberinto[y][x + 1] != 1:
+        return [x + 1, y]
     else:
         return None
 
@@ -70,7 +70,7 @@ def bfs(node, visited, queue, laberinto):  # function for BFS
     visited.append(node)
     queue.append(node)
     found = False
-    while queue and not found:          # Creating loop to visit each node
+    while queue and not found:  # Creating loop to visit each node
         m = queue.pop(0)
 
         neighbours = []
@@ -91,29 +91,64 @@ def bfs(node, visited, queue, laberinto):  # function for BFS
     return visited
 
 
-def dfs(inicio, finales, laberinto):
-    filas = len(laberinto)
-    columnas = len(laberinto[0])
-    visitados = [[False for j in range(columnas)] for i in range(filas)]
-    pila = []
-    pila.append(inicio)
-    visitados[inicio[0]][inicio[1]] = True
-    camino = []
-    while len(pila) > 0:
-        actual = pila.pop()
-        camino.append(actual)
-        if actual in finales:
-            return camino
-        vecinos = [[actual[0]-1, actual[1]], [actual[0]+1, actual[1]],
-                   [actual[0], actual[1]-1], [actual[0], actual[1]+1]]
-        for vecino in vecinos:
-            if vecino[0] >= 0 and vecino[0] < filas and vecino[1] >= 0 and vecino[1] < columnas and laberinto[vecino[0]][vecino[1]] != 1 and not visitados[vecino[0]][vecino[1]]:
-                pila.append(vecino)
-                visitados[vecino[0]][vecino[1]] = True
-    return None
+def shortest_path_dfs(node1, node2, laberinto):
+    path_stack = [[node1]]
+    # To keep track of previously visited nodes
+    previous_nodes = [node1]
+    if node1 in node2:
+        return path_stack[0]
+
+    while path_stack:
+        current_path = path_stack.pop()
+        last_node = current_path[-1]
+        next_nodes = []
+
+        next_nodes.append(up(last_node[0], last_node[1], laberinto))
+        next_nodes.append(down(last_node[0], last_node[1], laberinto))
+        next_nodes.append(left(last_node[0], last_node[1], laberinto))
+        next_nodes.append(right(last_node[0], last_node[1], laberinto))
+        # Search goal node
+        for dest in node2:
+            if dest in next_nodes:
+                current_path.append(dest)
+                return current_path
+        # Add new paths
+        for next_node in next_nodes:
+            if next_node != None and not next_node in previous_nodes:
+                new_path = current_path[:]
+                new_path.append(next_node)
+                path_stack.append(new_path)
+                # To avoid backtracking
+                previous_nodes.append(next_node)
+    # No path is found
+    return []
 
 
-def a_star(graph, start, goal, heuristic='manhattan'):
+def dfs(node, visited, stack, laberinto):
+    visited.append(node)
+    stack.append(node)
+    found = False
+    while stack and not found:
+        m = stack.pop()
+
+        neighbours = []
+        neighbours.append(up(m[0], m[1], laberinto))
+        neighbours.append(down(m[0], m[1], laberinto))
+        neighbours.append(left(m[0], m[1], laberinto))
+        neighbours.append(right(m[0], m[1], laberinto))
+
+        for neighbour in neighbours:
+            if neighbour != None and neighbour not in visited:
+                if laberinto[neighbour[1]][neighbour[0]] != 2:
+                    visited.append(neighbour)
+                    stack.append(neighbour)
+                else:
+                    found = True
+                    break
+    return visited
+
+
+def a_star(graph, start, goal, heuristic="manhattan"):
     # Create an empty priority queue
     frontier = []
     heapq.heappush(frontier, (0, start))
@@ -134,9 +169,9 @@ def a_star(graph, start, goal, heuristic='manhattan'):
             if next not in cost_so_far or new_cost < cost_so_far[next]:
                 cost_so_far[next] = new_cost
                 # Select the heuristic to use based on the parameter
-                if heuristic == 'manhattan':
+                if heuristic == "manhattan":
                     priority = new_cost + manhattan_distance(goal, next)
-                elif heuristic == 'euclidean':
+                elif heuristic == "euclidean":
                     priority = new_cost + euclidean_distance(goal, next)
                 heapq.heappush(frontier, (priority, next))
                 came_from[next] = current
@@ -159,7 +194,7 @@ def paint_maze(maze, name):
     rows = len(maze)
     cols = len(maze[0])
     # se crea la imagen con las dimensiones
-    img = Image.new('RGB', (cols * 12, rows * 12), color=(255, 255, 255))
+    img = Image.new("RGB", (cols * 12, rows * 12), color=(255, 255, 255))
     draw = ImageDraw.Draw(img)
     # se recorre cada celda del laberinto
     for row in range(rows):
