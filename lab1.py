@@ -44,9 +44,16 @@ else:
 
         # A*
         elif opcion == 3:
-            for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto):
-                laberinto[x[1]][x[0]] = 5
-            mz.paint_maze(laberinto, "solucion_astar.png")
+            print("\nQué heuristica desea aplicar?\n1.Manhattan \n2.Euclidean ")
+            heuristica = int(input("-> "))
+            if heuristica == 1:
+                for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto, "manhattan"):
+                    laberinto[x[1]][x[0]] = 5
+                mz.paint_maze(laberinto, "solucion_aStar_Manhattan.png")
+            elif heuristica == 2:
+                for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto, "euclidean"):
+                    laberinto[x[1]][x[0]] = 5
+                mz.paint_maze(laberinto, "solucion_aStar_Euclidean.png")
 
         # Salir
         elif opcion == 4:
