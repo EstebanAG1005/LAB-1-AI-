@@ -16,7 +16,7 @@ tuplai = tuple(inicio)
 tuplaf = tuple(single)
 
 mz.paint_maze(laberinto, "laberinto_discretizado.png")
-
+opcion = 0
 # Verificar si se encontró un inicio y al menos un final
 if inicio is None:
     print("No se encontró un cuadro rojo como inicio")
@@ -26,14 +26,17 @@ else:
     # Menú del programa
     bandera = True
     while bandera:
-        print("\nQué algoritmo desea aplicar?\n1. BFS\n2. DFS\n3. A*\n4. Salir")
-        opcion = int(input("-> "))
+        try:
+            print("\nQué algoritmo desea aplicar?\n1. BFS\n2. DFS\n3. A*\n4. Salir")
+            opcion = int(input("-> "))
+        except:
+            print("Ingrese un numero valido")
 
         # BFS
         if opcion == 1:
             # SHORTEST PATH BFS
-            # for x in al.shortest_path_bfs(inicio, finales, laberinto):
-            #     laberinto[x[1]][x[0]] = 5
+            for x in al.shortest_path_bfs(inicio, finales, laberinto):
+                laberinto[x[1]][x[0]] = 5
             mz.paint_maze(laberinto, "solucion_bfs.png")
 
         # DFS
@@ -47,11 +50,15 @@ else:
             print("\nQué heuristica desea aplicar?\n1.Manhattan \n2.Euclidean ")
             heuristica = int(input("-> "))
             if heuristica == 1:
-                for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto, "manhattan"):
+                for x in am.shortest_path_a_star(
+                    tuplai, tuplaf, laberinto, "manhattan"
+                ):
                     laberinto[x[1]][x[0]] = 5
                 mz.paint_maze(laberinto, "solucion_aStar_Manhattan.png")
             elif heuristica == 2:
-                for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto, "euclidean"):
+                for x in am.shortest_path_a_star(
+                    tuplai, tuplaf, laberinto, "euclidean"
+                ):
                     laberinto[x[1]][x[0]] = 5
                 mz.paint_maze(laberinto, "solucion_aStar_Euclidean.png")
 
