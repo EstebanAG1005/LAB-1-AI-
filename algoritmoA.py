@@ -1,48 +1,60 @@
 import heapq
+import math
+from typing import Tuple, List
 
-def up(x, y, laberinto):
-    if y > 0 and laberinto[y-1][x] != 1:
-        return (x, y-1)
-    return None
+def get_neighbours(node: Tuple[int, int], laberinto: List[List[int]]) -> List[Tuple[int, int]]:
+    neighbours = []
+    x, y = node
+    if y > 0 and laberinto[y - 1][x] != 1:
+        neighbours.append((x, y - 1))
+    if y < len(laberinto) - 1 and laberinto[y + 1][x] != 1:
+        neighbours.append((x, y + 1))
+    if x > 0 and laberinto[y][x - 1] != 1:
+        neighbours.append((x - 1, y))
+    if x < len(laberinto[0]) - 1 and laberinto[y][x + 1] != 1:
+        neighbours.append((x + 1, y))
+    return neighbours
 
-def down(x, y, laberinto):
-    if y < len(laberinto)-1 and laberinto[y+1][x] != 1:
-        return (x, y+1)
-    return None
+def manhattan_distance(a: Tuple[int, int], b: Tuple[int, int]) -> int:
+    x1, y1 = a
+    x2, y2 = b
+    return abs(x1 - x2) + abs(y1 - y2)
 
-def left(x, y, laberinto):
-    if x > 0 and laberinto[y][x-1] != 1:
-        return (x-1, y)
-    return None
+def euclidean_distance(a: Tuple[int, int], b: Tuple[int, int]) -> float:
+    x1, y1 = a
+    x2, y2 = b
+    return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-def right(x, y, laberinto):
-    if x < len(laberinto[0])-1 and laberinto[y][x+1] != 1:
-        return (x+1, y)
-    return None
+def shortest_path_a_star(start: Tuple[int, int], goal: Tuple[int, int], laberinto: List[List[int]]) -> List[Tuple[int, int]]:
+    if not (isinstance(start, tuple) and len(start) == 2):
+        raise ValueError('El parametro start debe ser una tupla de dos elementos')
+    if not (isinstance(goal, tuple) and len(goal) == 2):
+        raise ValueError('El parametro goal debe ser una tupla de dos elementos')
+    if not (isinstance(laberinto, list) and all(isinstance(row, list) for row in laberinto)):
+        raise ValueError('El parametro laberinto debe ser una matriz')
 
-current_from = None
-visited = set()
-
-def shortest_path_a_star(start, goal, laberinto):
-    heap = [(0, start)]
-    visited.clear()
+    heap = [(manhattan_distance(start, goal), start)]
+    visited = set()
     came_from = {}
+    cost_so_far = {start: 0}
+
     while heap:
-        (cost, current) = heapq.heappop(heap)
-        current = tuple(current)
+        (current_cost, current) = heapq.heappop(heap)
         if current in visited:
             continue
         visited.add(current)
-        came_from[current] = current_from
+
         if current == goal:
             return reconstruct_path(current, came_from)
+
         for neighbour in get_neighbours(current, laberinto):
-            if neighbour in visited:
-                continue
-            heapq.heappush(heap, (cost + 1 + manhattan_distance(neighbour, goal), neighbour))
+            new_cost = cost_so_far[current] + 1
+            if neighbour not in cost_so_far or new_cost < cost_so_far[neighbour]:
+                cost_so_far[neighbour] = new_cost
+                priority = new_cost + manhattan_distance(goal, neighbour)
+                heapq.heappush(heap, (priority, neighbour))
+                came_from[neighbour] = current
     return []
-
-
 
 def reconstruct_path(current, came_from):
     path = [current]
@@ -50,16 +62,3 @@ def reconstruct_path(current, came_from):
         current = came_from[current]
         path.append(current)
     return path[::-1]
-
-def manhattan_distance(a, b):
-    x1, y1 = int(a[0]), int(a[1])
-    x2, y2 = int(b[0][0]), int(b[0][1])
-    return abs(x1 - x2) + abs(y1 - y2)
-
-def get_neighbours(node, laberinto):
-    neighbours = []
-    neighbours.append(up(node[0], node[1], laberinto))
-    neighbours.append(down(node[0], node[1], laberinto))
-    neighbours.append(left(node[0], node[1], laberinto))
-    neighbours.append(right(node[0], node[1], laberinto))
-    return [n for n in neighbours if n]
