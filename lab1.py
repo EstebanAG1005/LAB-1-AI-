@@ -11,6 +11,10 @@ laberinto = maze[0]
 inicio = maze[1]
 finales = maze[2]
 
+single = finales[1]
+tuplai = tuple(inicio)
+tuplaf = tuple(single)
+
 mz.paint_maze(laberinto, "laberinto_discretizado.png")
 
 # Verificar si se encontró un inicio y al menos un final
@@ -40,8 +44,8 @@ else:
 
         # A*
         elif opcion == 3:
-            # for x in am.shortest_path_a_star(inicio, finales, laberinto):
-            #    laberinto[x[1]][x[0]] = 5
+            for x in am.shortest_path_a_star(tuplai, tuplaf, laberinto):
+                laberinto[x[1]][x[0]] = 5
             mz.paint_maze(laberinto, "solucion_astar.png")
 
         # Salir
