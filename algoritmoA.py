@@ -15,28 +15,40 @@ def get_neighbours(node: Tuple[int, int], laberinto: List[List[int]]) -> List[Tu
         neighbours.append((x + 1, y))
     return neighbours
 
+# Manhattan es la suma de los valores absolutos de las diferencias en las coordenadas x e y del objetivo y las coordenadas de la celda actual.
+# Se usa esta heuristica cuando se nos permite movernos solo en cuatro direcciones (derecha, izquierda, arriba, abajo).
 def manhattan_distance(a: Tuple[int, int], b: Tuple[int, int]) -> int:
     x1, y1 = a
     x2, y2 = b
     return abs(x1 - x2) + abs(y1 - y2)
 
+# Euclidean es la distancia entre la celda actual y la celda objetivo usando la fórmula de distancia
+# Se usa esta heuristica cuando se nos permite movernos en cualquier dirección.
 def euclidean_distance(a: Tuple[int, int], b: Tuple[int, int]) -> float:
     x1, y1 = a
     x2, y2 = b
     return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-def shortest_path_a_star(start: Tuple[int, int], goal: Tuple[int, int], laberinto: List[List[int]]) -> List[Tuple[int, int]]:
+def shortest_path_a_star(start: Tuple[int, int], goal: Tuple[int, int], laberinto: List[List[int]], heuristic: str = "manhattan") -> List[Tuple[int, int]]:
     if not (isinstance(start, tuple) and len(start) == 2):
         raise ValueError('El parametro start debe ser una tupla de dos elementos')
     if not (isinstance(goal, tuple) and len(goal) == 2):
         raise ValueError('El parametro goal debe ser una tupla de dos elementos')
     if not (isinstance(laberinto, list) and all(isinstance(row, list) for row in laberinto)):
         raise ValueError('El parametro laberinto debe ser una matriz')
+    if heuristic not in {"manhattan", "euclidean"}:
+        raise ValueError(f'Heuristic {heuristic} not supported')
 
-    heap = [(manhattan_distance(start, goal), start)]
+    heap = []
     visited = set()
     came_from = {}
-    cost_so_far = {start: 0}
+    cost_so_far = {}
+    if heuristic == "manhattan":
+        heap.append((manhattan_distance(start, goal), start))
+        cost_so_far[start] = 0
+    elif heuristic == "euclidean":
+        heap.append((euclidean_distance(start, goal), start))
+        cost_so_far[start] = 0
 
     while heap:
         (current_cost, current) = heapq.heappop(heap)
@@ -48,13 +60,19 @@ def shortest_path_a_star(start: Tuple[int, int], goal: Tuple[int, int], laberint
             return reconstruct_path(current, came_from)
 
         for neighbour in get_neighbours(current, laberinto):
-            new_cost = cost_so_far[current] + 1
+            if heuristic == "manhattan":
+                new_cost = cost_so_far[current] + 1
+                priority = new_cost + manhattan_distance(goal, neighbour)
+            elif heuristic == "euclidean":
+                new_cost = cost_so_far[current] + 1
+                priority = new_cost + euclidean_distance(goal, neighbour)
+
             if neighbour not in cost_so_far or new_cost < cost_so_far[neighbour]:
                 cost_so_far[neighbour] = new_cost
-                priority = new_cost + manhattan_distance(goal, neighbour)
                 heapq.heappush(heap, (priority, neighbour))
                 came_from[neighbour] = current
     return []
+
 
 def reconstruct_path(current, came_from):
     path = [current]
